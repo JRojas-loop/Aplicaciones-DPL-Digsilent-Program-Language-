@@ -1,0 +1,24 @@
+!Usos adicionales para comandos printf()
+!JoshuaRojas: jarojash@uni.pe
+
+object o_bus,o_gen;
+double i_nom;  
+int j;
+
+i_nom=0.355789; !unidades kA
+j=0;
+ClearOutput();!borrar la ventana de comandos
+printf('La corriente nominal es: %1.3f kA',i_nom);
+j+=1;   
+o_bus=bus1;!asigna el objeto barra de external object
+o_gen=gen1;
+printf('La barra de estudio es: %o',o_bus);
+j+=1;
+
+printf('El valor final de j es: %i',j); 
+ 
+printf('Los External Objects son: %o,%o,%i',o_bus,o_gen,j);
+ 
+   
+   
+   
