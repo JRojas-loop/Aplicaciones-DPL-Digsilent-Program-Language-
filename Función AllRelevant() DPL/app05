@@ -1,0 +1,16 @@
+double vn;
+ set s_elm;
+ object o_elm;
+ int j;
+ 
+ ClearOutput();
+ s_elm=AllRelevant();!Todos los objetos relevantes del estudio de caso
+
+ o_elm=s_elm.First();!Filtra el primer objeto
+ while(o_elm){
+     printf('%o',o_elm);
+     o_elm=s_elm.Next();!Seguir al siguiente elm del set 
+     j+=1;
+             } 
+                         
+ printf('\ccTodos los objetos están impresos son un total de: %i',j);
