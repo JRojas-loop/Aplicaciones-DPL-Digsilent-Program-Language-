@@ -1,0 +1,29 @@
+ double i_nom,long,vn,cap,vhv,vlv,ft,sn;
+ object o_tr2,type,hv,lv;   
+ string nm;
+ int nlp,fs,ntp,tec;
+ set s_tr2; 
+ 
+ 
+ ClearOutput();
+             
+ s_tr2=AllRelevant('ElmTr2');
+ o_tr2=s_tr2.First();            
+ printf('Name;Type;HV;LV;fs(1:fs,0:es);NTP;Vhv;Vlv;f(hz);TEC;Sn(MVA);');
+  
+ while(o_tr2){ 
+  nm=o_tr2:e:loc_name;
+  type=o_tr2:e:typ_id;
+  hv=o_tr2:e:bushv;hv=hv:e:cterm;hv=hv:e:cpSubstat;
+  lv=o_tr2:e:buslv;lv=lv:e:cterm;lv=lv:e:cpSubstat;
+  fs=o_tr2:e:outserv;
+  ntp=o_tr2:e:ntnum;
+  vhv=o_tr2:t:utrn_h;
+  vlv=o_tr2:t:utrn_l;
+  ft=o_tr2:t:frnom;
+  tec=o_tr2:t:nt2ph;
+  sn=o_tr2:t:strn;
+
+  printf('%s;%o;%o;%o;%i;%i;%1.2f;%1.2f;%1.2f;%i;%1.2f;',nm,type,hv,lv,fs,ntp,vhv,vlv,ft,tec,sn);
+  o_tr2=s_tr2.Next();
+              }
