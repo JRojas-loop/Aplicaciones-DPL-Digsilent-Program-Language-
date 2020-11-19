@@ -1,0 +1,6 @@
+int j;
+
+for(j=0;j<=100;j+=1){
+
+   printf('Iteración N°%i',j);
+                    }
