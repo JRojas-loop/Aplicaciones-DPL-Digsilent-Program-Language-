@@ -1,0 +1,22 @@
+object ldf;
+int val;
+ 
+ClearOutput(); 
+
+EchoOff();!Desactivar impresiones de dialogo
+ResetCalculation();!resetear cálculos
+ldf=GetCaseObject('ComLdf');!°INvocando al cálculo de flujo de carga
+
+ ldf:iopt_at=1;!tap auto si(1), no(0)
+ ldf:iopt_asht=1;!tap shunt
+ ldf:iopt_lim=1;!limites de potencia reactiva
+ ldf:i_power=val;!0:corrientes 1: model NR
+ ldf:iopt_check=0;!Progress report si(1), no(0)  
+ 
+val=ldf.Execute();!ejecutamos dicho comando FC
+if(.not.val){
+printf('Se ejecutó correctamente: %o',ldf);  
+            }
+else{printf('No Convergencia');}            
+
+EchoOn();!activamos impresión de diálogo
