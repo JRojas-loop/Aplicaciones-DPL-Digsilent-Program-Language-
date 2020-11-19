@@ -1,0 +1,21 @@
+ double i_nom,long,vn,cap;
+ object type;   
+ string nm;
+ int val1,val2;
+ 
+ ClearOutput();
+ 
+ type=line1.GetType();!devuelve tipo de libreria
+ printf('La LT utiliza la Lib: %o',type);
+ 
+ val1=line1:e:outserv;!confirma 1:fs 0:es para LT  
+ if(val1){
+       printf('%o está FS',line1);
+        }
+ else {printf('%o está ES',line1);}   
+ 
+ !Aplicarle apertura a interruptores de linea
+! line1.SwitchOff(); !Abrimos interruptores
+ line1.SwitchOn();  !Cerrar interruptores
+    
+    
