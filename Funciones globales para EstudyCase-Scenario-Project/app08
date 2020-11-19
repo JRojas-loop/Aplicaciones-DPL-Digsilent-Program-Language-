@@ -1,0 +1,10 @@
+object prj,case,sop;
+
+ClearOutput();
+prj=GetActiveProject();
+case=ActiveCase();
+sop=GetActiveScenario();
+
+printf('Proyecto: %o',prj);
+printf('Estudio de Caso: %o',case);
+printf('Escenario de Operación: %o',sop);
