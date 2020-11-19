@@ -1,0 +1,26 @@
+  object cc;
+  int val; 
+  double scc,icc,ip;
+  
+  ClearOutput();
+  
+  cc=GetCaseObject('ComShc'); !objeto comando CC
+  
+  cc:e:iopt_mde=1;!1:IEC60909
+  cc:e:iopt_shc='3psc';!'3psc':Falla trifásica  'spgf':falla mono-tierr
+  cc:e:shcobj=bus1;
+  cc:e:iopt_asc=0;!reporte de resultados 0:off 1:on
+  val=cc.Execute();!0:exitoso 1:no exitoso
+  
+  if(.not.val){
+    
+      scc=bus1:m:Skss;
+      icc=bus1:m:Ikss;
+      ip=bus1:m:Ip; 
+      
+      printf('%o ejecutado en %o',cc,bus1);
+      printf('Scc:%1.3f MVA|Icc:%1.3f kA|ip=%1.3f kA',scc,icc,ip);
+              
+              } 
+  else{printf('Cálculo de CC no exitoso');}
+  
