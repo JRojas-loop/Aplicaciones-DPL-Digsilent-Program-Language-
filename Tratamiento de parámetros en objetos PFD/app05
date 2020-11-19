@@ -1,0 +1,22 @@
+ !Usos adicionales para parámetros
+ 
+ double i_nom,long,vn,cap;
+ object type;   
+ string nm;
+ int nlp;
+ 
+ ClearOutput();
+ 
+  i_nom=line1:e:Inom_a; !asignando corriente nominal 
+  line1:e:dline=250; !reasignando valor a la longitud de linea
+  long=line1:e:dline;!asignando valor de longitud
+  type=line1:typ_id; !asignar librería       
+  nm=line1:loc_name; !devuelve el nombre del objeto 
+  line1:t:uline=91;!asignando tensión a libreria
+  vn=line1:t:uline; !devuelve parámetro dentro de la libreria especifica
+  nlp=line1:nlnum; !lns en paralelo
+  cap=line1:t:cline;!Devolver el parámetro de capacitancia (LIB)
+   
+  printf('Name;Type;Inom(kA);Vom(kV);NLP;Long(km);CapLin;');
+  printf('%s;%o;%1.3f;%1.2f;%i;%1.2f;%1.3f',nm,type,i_nom,vn,nlp,long,cap);
+  
