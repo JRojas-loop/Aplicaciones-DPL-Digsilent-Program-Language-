@@ -1,0 +1,110 @@
+
+    
+    string date;
+    int seconds;                               
+    object Prj;
+    set iprj;
+    int nCasoFC,ret;   
+    string caso;   
+    string sAux1;
+    object aCaso;
+    object Ldf;
+    int error;
+    ! --
+      
+    int cint,ntitulo,ierrx,count,hCompa,stop,t;
+    double load;
+    object O;
+    set S;
+    string Hoja;                     
+    
+    string nCaso,name; 
+    int iCase2;
+    string s,s1;
+    int ierr,x,y,x1,y1,i,w,x2,y2;
+    string observ; 
+      
+    int ix,iy;  
+    string sx1,sx2;  
+    
+    ClearOutput(); !Borra la hoja de salida 
+    
+    ! ======================================================================  
+    seconds = GetSystemTime();
+    date = FormatDate('Inicio: Fecha %d-%m-%Y Hora %H:%M:%S %tz', seconds);
+    printf('%s', date); !current time
+    ! ======================================================================  
+    
+    ! Abrir y contar proyectos de DIgSilent
+    Prj = ActiveProject();  !objeto de todo el proyecto
+    iprj = Prj.GetContents('*.IntCase',1);  !set los casos 
+    nCasoFC = iprj.Count();      !cuenta los numeros de casos que tiene
+    printf('--> Número de casos totales en la BDD: %d', nCasoFC);     
+    
+    ! Leer casos de flujo de carga a ejecutar
+    ret = fopen(rutaCasosFC, 'r', 1, 1);
+    if (ret > 0) {
+       Error('--> Archivo no se puede abrir para lectura');
+       exit();
+    }
+    !Escribir en archivo .csv
+    fopen(rutaResultadosFC, 'w', 2);  
+    fprintf(2,'ID,Elemento,Tipo,Caso,Grid,Aux,Res1,Res2,Res3,Res4,Res5,Res6,Res7,Res8,Res9,Res10,Res11,Res12');
+    !Aqui nos quedamos
+    SetLineFeed(0);!disable newline for printf
+    while(1) {
+       !read next line
+       ret = fscanf(1,'%s',caso); !read complete line
+       printf('--> Ejecutar FC: %s\n', caso);
+       
+       !Se activa el caso de estudio 
+       sAux1 = sprintf('*%s',caso);
+       aCaso = iprj.FirstFilt(sAux1); 
+       EchoOff();       
+       aCaso.Activate();
+       EchoOn();  
+    
+       !Ejecuta Flujo de Potencia
+       Ldf = GetCaseObject('ComLdf');
+       EchoOff();
+       error = Ldf.Execute();    ! ejecuta flujo
+       EchoOn();
+       if (error) exit();        ! salida en caso de error
+    
+       
+       !Bloque: Reporte Transformadores 3 dev
+       SalidaTR3.Execute();                        
+       
+       !Bloque: Reporte Lineas
+       SalidaLIN.Execute(); 
+       
+       !Bloque: Reporte Unidades de Generación
+       SalidaGEN.Execute();                            
+    
+       !Bloque: Reporte Transformadores 2 dev
+       SalidaTR2.Execute();                        
+    
+       !Bloque: Reporte B shunt (Capacitores y Reactores)
+       SalidaBSH.Execute();                        
+    
+       !Bloque: Reporte C serie (Capacitores)
+       SalidaCSE.Execute();                        
+    
+       !Bloque: Reporte SVC
+       SalidaSVC.Execute();                        
+    
+       !Bloque: Reporte Barras (terminales)
+       SalidaBUS.Execute();                        
+       
+       if (ret < 1) {
+          break; !no next line
+       }
+    }
+    fclose(1); ! cerrar archivos de casos de FC
+    fclose(2); ! cerrar archivos de resultados de FC
+    
+    ! ======================================================================  
+    seconds = GetSystemTime();
+    date = FormatDate('Fin: Fecha %d-%m-%Y Hora %H:%M:%S %tz', seconds);
+    printf('%s', date); !current time
+    ! ======================================================================  
