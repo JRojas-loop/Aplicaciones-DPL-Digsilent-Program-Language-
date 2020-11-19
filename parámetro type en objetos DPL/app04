@@ -1,0 +1,6 @@
+ double vn;
+ 
+ ClearOutput();
+ vn=bus1:uknom;!tensión nominal 
+ 
+ printf('La barra %o posee una Vn=%1.2f kV',bus1,vn);
