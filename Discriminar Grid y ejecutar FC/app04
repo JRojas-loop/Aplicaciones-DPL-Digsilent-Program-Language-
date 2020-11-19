@@ -1,0 +1,45 @@
+   
+set s_bus,s_grid; !Creando general set y definiendo
+object o_bus,o_grid,grid,c_grid,ldf; 
+int j,enr;
+double v_pu;   
+
+
+   ClearOutput(); !Limpiar la ventana de comandos
+   EchoOff();
+   ldf=GetCaseObject('ComLdf'); !llamar al fc
+   
+   s_grid=set_grid.All();
+   s_bus=AllRelevant('ElmTerm');   
+   o_bus=s_bus.First(); !Filtra el primer elemento 
+   
+   v_grid.Clear(); !v_grid: vector y Clear, limpia el vector  
+   
+   !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+   o_grid=s_grid.First();
+   while(o_grid){
+   v_grid.Insert(j,o_grid); !Insertamos valor al vector
+   j+=1; 
+   o_grid=s_grid.Next();
+                }       
+   !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° 
+               
+   c_grid=v_grid.Get(choose_grid); !Selecciona el grid especifico
+   
+   !Error inducido
+   
+   ldf.Execute();
+   while(o_bus){      
+       grid=o_bus:e:cpGrid;!obteneindo el parametro grid         
+       if(grid=c_grid){
+       
+           enr=o_bus.IsEnergized(); !Verificar energización           
+           if(enr){
+             v_pu=o_bus:m:u;
+             printf('%o-%o v(p.u): %1.3f ',o_bus,grid,v_pu);     
+                  }
+                      }
+      o_bus=s_bus.Next();          
+               }
+               
+    EchoOn();           
