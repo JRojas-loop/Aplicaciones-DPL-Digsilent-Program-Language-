@@ -1,0 +1,38 @@
+object o_bus,ldf;
+int val;
+double vkv,vpu,ang;
+set s_bus;
+ 
+ClearOutput(); 
+
+s_bus=set_buses.All();!devolviendo all objects sobre la var set.
+
+EchoOff();!Desactivar impresiones de dialogo
+ResetCalculation();!resetear cálculos
+ldf=GetCaseObject('ComLdf');!°INvocando al cálculo de flujo de carga
+
+ ldf:iopt_at=1;!tap auto si(1), no(0)
+ ldf:iopt_asht=0;!tap shunt
+ ldf:iopt_lim=1;!limites de potencia reactiva
+ ldf:i_power=val;!0:corrientes 1: model NR
+ ldf:iopt_check=0;!Progress report si(1), no(0)  
+ 
+val=ldf.Execute();!ejecutamos dicho comando FC
+if(.not.val){
+
+   
+  o_bus=s_bus.First();!filtra el primer elemento
+  printf('Bus;V(kv);V(p.u);Ang(°);');        
+  while(o_bus){          
+    vkv=o_bus:m:Ul;!Tension de barra en kV
+    vpu=o_bus:m:u;!Tension de barra en p.u
+    ang=o_bus:m:phiu;!ángulo de barra producto de FC        
+    printf('%o;%1.2f;%1.2f;%1.2f;',o_bus,vkv,vpu,ang);
+    o_bus=s_bus.Next();
+              }
+ printf('Se ejecutó correctamente: %o',ldf);             
+            
+            }
+else{printf('No Convergencia');}            
+
+EchoOn();!activamos impresión de diálogo
