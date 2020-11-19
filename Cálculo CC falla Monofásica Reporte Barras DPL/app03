@@ -1,0 +1,37 @@
+  object cc,o_bus;
+  int val; 
+  double scc,icc,ip;     
+  set s_bus;
+  
+  ClearOutput();
+  cc=GetCaseObject('ComShc'); !objeto comando CC
+  s_bus=AllRelevant('ElmTerm');
+   o_bus=s_bus.First();
+  EchoOff();
+   while(o_bus){ 
+            cc:e:shcobj=o_bus;   
+            cc:e:iopt_mde=1;!1:IEC60909
+            cc:e:iopt_shc='spgf';!'3psc':Falla trifásica  'spgf':falla mono-tierr           
+            cc:e:iopt_asc=0;!reporte de resultados 0:off 1:on
+            val=cc.Execute();!0:exitoso 1:no exitoso
+            
+             if(.not.val){
+            scc=o_bus:m:Skss:A;
+            icc=o_bus:m:Ikss:A;
+            ip=o_bus:m:ip:A; 
+            
+            printf('%o 1F ejecutado en %o',cc,o_bus);
+            printf('Scc:%1.3f MVA|Icc:%1.3f kA|ip=%1.3f kA',scc,icc,ip);
+              
+              o_bus=s_bus.Next();      
+                         }
+             
+              else{
+              printf('Cálculo de CC no exitoso en: %o',o_bus);
+              o_bus=s_bus.Next();       
+                  }  
+               
+               }
+               
+  EchoOn();
+  
