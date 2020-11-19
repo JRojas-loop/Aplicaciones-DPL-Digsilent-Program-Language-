@@ -1,0 +1,25 @@
+ 
+ set s_elm;
+ object o_elm;
+ int j,typ;
+ ClearOutput();
+ s_elm=AllRelevant();
+ o_elm=s_elm.First();
+ j=0;   
+ 
+ while(o_elm){
+       
+       !printf('Objeto N°%i:%o',j,o_elm);
+       if(j>=100){break;}!Rompe el bucle  
+       
+       typ=o_elm.IsClass('ElmTerm'); 
+       if(typ){j+=1;
+           printf('Barra N°%i: %o',j,o_elm);
+           o_elm=s_elm.Next();
+           continue;!Salta al siguiente bucle
+              }
+
+       o_elm=s_elm.Next();
+              
+              }
+ 
