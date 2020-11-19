@@ -1,0 +1,49 @@
+  
+  object O;
+  string case;
+  set xSet;      
+  object xObject;
+  
+  string str_loc_name;
+  string str_cpGrid;
+  string str_loc_name2;
+  int int_outserv;
+  int int_ntrcn;
+  int int_nntap;
+  double dou_Psum;
+  double dou_Qsum;
+  double dou_Ssum;
+  double dou_Load;
+  
+  string tipo;
+  int out;
+     
+  ! Extraer nombre de caso
+  O=ActiveCase();
+  case=O:loc_name;
+  
+  ! Ordenar 
+  xSet=AllRelevant('*.ElmTr2'); 
+  xSet.SortToVar(0, 'loc_name');
+  
+  ! Escribir en archivo .csv
+  for(xObject = xSet.First();xObject;xObject = xSet.Next())
+  {
+     out = xObject:outserv;  
+     if (out=0)   ! out==>0=ES/1=FS. 
+     {
+     tipo = 'TR2';
+     str_loc_name   = xObject:b:loc_name;
+     str_cpGrid     = xObject:r:cpGrid:b:loc_name;
+     str_loc_name2  = xObject:t:loc_name; 
+     int_outserv = xObject:e:outserv;
+     int_ntrcn = xObject:e:ntrcn;
+     int_nntap = xObject:e:nntap;
+     dou_Psum = xObject:m:P:bushv;
+     dou_Qsum = xObject:m:Q:bushv;
+     dou_Ssum = xObject:m:S:bushv;  
+     dou_Load = xObject:c:loading;
+  
+     fprintf(2,'%s-%s-%s,%s,%s,%s,%s,%s,%d,%d,%d,%f,%f,%f,%f\n',str_loc_name,str_loc_name2,case,str_loc_name,tipo,case,str_cpGrid,str_loc_name2,int_outserv,int_ntrcn,int_nntap,dou_Psum,dou_Qsum,dou_Ssum,dou_Load);
+     }
+  }
