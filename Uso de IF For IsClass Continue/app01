@@ -1,0 +1,41 @@
+  set s_elm;
+  object case,stdc,o_elm,ldf; 
+  double kA,v_pu;
+  int type,fs,enr;
+  
+  ClearOutput();!borra la ventana de salida   
+  EchoOff();  !Desactiva la interfaz usuario
+  
+  case=ActiveCase(); ! Devuelve el estudio de caso activo
+  stdc=GetActiveScenario(); !Devuelve el escenario de operación activo  
+  printf('El Estudio de Caso es: %o',case);
+  printf('El Escenario de Operación es: %o',stdc);
+ 
+  ldf=GetCaseObject('ComLdf'); !Devuelve el objeto FC
+  ldf.Execute(); !Ejecuta FC  
+    
+  s_elm=set_bus.All(); !Crea set especifico
+
+     for(o_elm=s_elm.First();o_elm;o_elm=s_elm.Next()){
+     
+        type=o_elm.IsClass('ElmTerm'); !Verifica el classname
+        fs=o_elm:e:outserv; ! 1=fs ; 0=ES
+        enr=o_elm.IsEnergized(); !1:Energizado ; 0:Desenergizado
+        if(type .and. .not.fs .and. enr){     
+                !printf('%o',o_elm);
+                v_pu=o_elm:m:u; !Devuelve el resultado V(p.u.)FC
+                
+                printf('%o v(p.u)=%1.3f',o_elm,v_pu);
+                }               
+                
+        else    {
+                continue;!continua el bucle salta iteración
+                }        
+     
+                                                      }
+  EchoOn();  !Reactiva la interfaz usuario
+      
+ 
+  
+  
+              
