@@ -1,0 +1,8 @@
+   ClearOutput(); !Limpiar la ventana de comandos
+   printf('La corriente nominal %1.3f kA',i_nom);!Imprimir en la vent de comandos    
+   printf('La barra de estudio es: %o',bus1);
+   printf('El generador de estudio es: %o',gen1);  
+   printf('La variable de cuenta es: %i',i);
+   i=i+1;!Aumentar en 1 el contador                                  
+   printf('La variable de cuenta es: %i',i);
+   i+=1;!Aumentar en 1 el contador
