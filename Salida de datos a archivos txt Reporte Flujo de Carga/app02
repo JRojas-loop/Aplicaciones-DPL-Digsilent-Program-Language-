@@ -1,0 +1,49 @@
+ object o_bus,ldf;
+int val,enr;
+double vkv,vpu,ang;
+set s_bus;
+ 
+ClearOutput(); 
+
+fopen(ruta,'w',1);
+fprintf(1,'Bus;V(kv);V(p.u);Ang(°);');
+
+s_bus=AllRelevant('ElmTerm');!devolviendo all objects sobre la var set.
+
+EchoOff();!Desactivar impresiones de dialogo
+ResetCalculation();!resetear cálculos
+ldf=GetCaseObject('ComLdf');!°INvocando al cálculo de flujo de carga
+
+ ldf:iopt_at=1;!tap auto si(1), no(0)
+ ldf:iopt_asht=0;!tap shunt
+ ldf:iopt_lim=1;!limites de potencia reactiva
+ ldf:i_power=val;!0:corrientes 1: model NR
+ ldf:iopt_check=0;!Progress report si(1), no(0)  
+ 
+val=ldf.Execute();!ejecutamos dicho comando FC
+if(.not.val){
+
+   
+  o_bus=s_bus.First();!filtra el primer elemento
+          
+  while(o_bus){          
+    !printf('%o',o_bus);
+    enr=o_bus.IsEnergized();
+    if(enr){
+      vkv=o_bus:m:Ul;!Tension de barra en kV
+      vpu=o_bus:m:u;!Tension de barra en p.u
+      ang=o_bus:m:phiu;!ángulo de barra producto de FC        
+      fprintf(1,'%s;%f;%f;%f;',o_bus:loc_name,vkv,vpu,ang);
+            }
+    else{printf('\ccLa barra %o no está energizada',o_bus);}        
+     
+      o_bus=s_bus.Next();
+    
+    
+              }
+ printf('Se ejecutó correctamente: %o',ldf);             
+            
+            }
+else{printf('No Convergencia');}            
+fclose(1);
+EchoOn();!activamos impresión de diálogo
