@@ -1,0 +1,52 @@
+   
+  set s_elm,s_case;
+  object case,stdc,o_elm,ldf; 
+  double kA,v_pu,v_n,pg,qg;
+  int type,j,fs; 
+  string nm;
+  
+  ClearOutput();!borra la ventana de salida   
+  EchoOff();  !Desactiva la interfaz usuario   
+  
+  s_case=set_cases.All();!Devuelve todos los elementos del set
+  fopen(ruta,'w',1);!abre archivo .txt en "ruta" asigna N°1
+  fprintf(1,'StudyCase;Scenario;ElmSym;Vnom;P;Q;');!Escribe sobre archivo "ruta"
+  
+  for(case=s_case.First();case;case=s_case.Next())   { 
+  
+  case.Activate(); ! Activa el estudio de caso elegido
+  stdc=GetActiveScenario(); !Devuelve el escenario de operación activo  
+ 
+  ldf=GetCaseObject('ComLdf'); !Devuelve el objeto FC
+  ldf.Execute(); !Ejecuta FC  
+    
+  s_elm=AllRelevant('ElmSym'); !Crea set especifico  
+       o_elm=s_elm.First();!Filtra el primer coincidente
+            while(o_elm){ 
+                   fs=o_elm:e:outserv; !ES:0; FS:1    
+                   if(.not.fs){
+                   nm=o_elm:e:loc_name;!nombre objeto
+                   v_n=o_elm:n:u:bus1;!tensión result bornes
+                   pg=o_elm:m:P:bus1;!Potencia activa generada
+                   qg=o_elm:m:Q:bus1;!Potencia reactiva generada
+     fprintf(1,'%s;%s;%s;%1.3f;%1.3f;%1.3f;',case:e:loc_name,stdc:e:loc_name,nm,v_n,pg,qg);    
+                    o_elm=s_elm.Next(); 
+                    !fs=o_elm:e:outserv; 
+                    continue;!continua el bucle
+                              }
+                   else {printf('%o en FS',o_elm);} 
+                   o_elm=s_elm.Next();           
+                              
+                        }
+
+     
+                                                      }  
+    
+    fclose(1); !Cierra el .txt asignado como 1                                                 
+
+  EchoOn();  !Reactiva la interfaz usuario
+      
+ 
+  
+  
+              
