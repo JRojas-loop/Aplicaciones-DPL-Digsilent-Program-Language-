@@ -1,0 +1,49 @@
+  object cc,o_line;
+  int val,fs; 
+  double scc,icc,ip;     
+  set s_line;
+  
+  ClearOutput();
+  cc=GetCaseObject('ComShc'); !objeto comando CC
+  s_line=AllRelevant('ElmLne');
+   o_line=s_line.First();
+  EchoOff();
+   while(o_line){ 
+            cc:e:shcobj=o_line;
+            cc:e:ppro=km; !distancia de ubic de la falla   
+            cc:e:iopt_mde=1;!1:IEC60909
+            cc:e:iopt_shc='3psc';!'3psc':Falla trifásica  'spgf':falla mono-tierr           
+            cc:e:iopt_asc=0;!reporte de resultados 0:off 1:on           
+            fs=o_line:outserv;
+            
+            if(.not.fs){
+            val=cc.Execute();!0:exitoso 1:no exitoso   
+                       }
+            else{
+              printf('\ccLínea se encuentra FS: %o',o_line);
+              o_line=s_line.Next();
+              continue;   
+                }            
+            
+             
+             if(.not.val){
+           
+            scc=o_line:m:Skss:busshc;
+            icc=o_line:m:Ikss:busshc;
+            ip=o_line:m:ip:busshc;
+            
+            printf('%o 3F ejecutado en %o',cc,o_line);
+            printf('Scc:%1.3f MVA|Icc:%1.3f kA|ip=%1.3f kA',scc,icc,ip);
+              
+              o_line=s_line.Next();      
+                         }
+             
+              else{
+              printf('\ccCC no se ha calculado correctamente: %o',o_line);
+              o_line=s_line.Next();       
+                  }  
+               
+               }!fin de bucle while
+               
+  EchoOn();
+  
