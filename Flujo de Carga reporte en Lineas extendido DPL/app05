@@ -1,0 +1,44 @@
+ object o_line,ldf,typ,bus1,bus2;
+ set s_line;
+ int val,fs; 
+ double inom,long,vn,ib1,ib2,sb1,sb2,pb1,pb2,qb1,qb2,load;
+ 
+ ClearOutput();
+ EchoOff();
+ s_line=AllRelevant('ElmLne');
+ ldf=GetCaseObject('ComLdf');
+ val=ldf.Execute();
+ 
+ if(.not.val){
+    
+    o_line=s_line.First();
+    printf('Line|Lib|Long(km)|Bus1|Bus2|Ib1(kA)|Ib2(kA)|Sb1(MVA)|Sb2(MVA)|Pb1(MW)|Pb2(MW)|Qb1(MVar)|Qb2(MVar)|Load(%%)');
+    while(o_line){
+          fs=o_line:outserv; !0:es 1:fs
+    
+          if(fs=0){ 
+            typ=o_line:typ_id;
+            long=o_line:dline; 
+            bus1=o_line:bus1;bus1=bus1:cterm;bus1=bus1:cpSubstat;
+            bus2=o_line:bus2;bus2=bus2:cterm;bus2=bus2:cpSubstat;
+            ib1=o_line:m:I:bus1;
+            ib2=o_line:m:I:bus2;
+            sb1=o_line:m:S:bus1;
+            sb2=o_line:m:S:bus2;
+            pb1=o_line:m:P:bus1;
+            pb2=o_line:m:P:bus2;
+            qb1=o_line:m:Q:bus1;
+            qb2=o_line:m:Q:bus2;
+            load=o_line:c:loading; 
+          printf('%o|%o|%1.2f|%o|%o|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f',o_line,typ,long,bus1,bus2,ib1,ib2,sb1,sb2,pb1,pb2,qb1,qb2,load);
+                  }
+          else{printf('%o: \ccFS',o_line);}
+          o_line=s_line.Next();
+                 }
+                 
+                 
+    printf('Se ejecutó correctamente: %o',ldf);
+             }
+ else{printf('No convergencia');}            
+             
+ EchoOn();
