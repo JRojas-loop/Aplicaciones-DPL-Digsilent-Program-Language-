@@ -1,0 +1,5 @@
+!Usar una carpeta remota donde se direccione los archivos:
+1_Ingrese_Casos_FC (INgresar nombres de estudios de caso a estudiar)
+2_Resultados_FC2 (Archivo .CSV donde se direcciona la salida de resultados)
+
+Nota: Esta dirección de la carpeta que contiene estos archivos debe ser ingresada en la data input del DPL a ejecutar. 
