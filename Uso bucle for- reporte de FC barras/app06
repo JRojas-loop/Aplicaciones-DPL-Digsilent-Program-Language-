@@ -1,0 +1,15 @@
+ object ldf,o_bus;
+ set s_bus;
+ double vpu; 
+ 
+ ldf=GetCaseObject('ComLdf');
+ ldf.Execute(); 
+ 
+ s_bus=AllRelevant('ElmTerm');
+ 
+ for(o_bus=s_bus.First();o_bus;o_bus=s_bus.Next()){
+
+       vpu=o_bus:m:u;
+       printf('%o v(p.u)=%1.3f',o_bus,vpu);
+ 
+                                                  }
