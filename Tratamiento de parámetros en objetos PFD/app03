@@ -1,0 +1,12 @@
+!Tratamiento de variables double en DPL
+ double i_nom;
+ 
+ i_nom=0.587912; 
+  
+  ClearOutput();
+  printf('La corriente nominal es: %1.3f',i_nom);
+  printf('\ce La corriente nominal es: %1.3f',i_nom);!cambiar color a azul 
+  printf('\cd La corriente nominal es: %1.3f',i_nom);!cambiar color a verde
+  printf('\cl La corriente nominal es: %1.3f',i_nom);  
+  
+  printf('\cg El porcentaje de carga es: 90%%');
