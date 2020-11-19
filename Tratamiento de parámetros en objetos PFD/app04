@@ -1,0 +1,24 @@
+ !Asignación de parámetros esenciales en objetos
+
+ double i_nom,long,vn;
+ object type;   
+ string nm;
+ int nlp;
+ 
+ ClearOutput();
+ 
+  i_nom=line1:e:Inom_a; !asignando corriente nominal 
+  long=line1:e:dline;!asignando valor de longitud
+  type=line1:typ_id; !asignar librería       
+  nm=line1:loc_name; !devuelve el nombre del objeto 
+  vn=line1:t:uline; !devuelve parametro dentro de la libreria especifica
+  nlp=line1:nlnum; !lns en paralelo
+   
+  printf('La línea %o posee una Inom de: %1.3f kA',line1,i_nom);
+  printf('La línea %o posee una Longitud de: %1.2f km',line1,long);  
+  printf('La librería usada es: %o',type);
+  printf('El nombre de la línea es: \cc%s',nm);  
+  printf('La tensión nominal de linea es: \cb%1.2f kV',vn);
+  printf('El N° de Lns en paralelo es: %i',nlp);
+  
+ 
