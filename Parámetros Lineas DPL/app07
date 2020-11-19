@@ -1,0 +1,25 @@
+ double i_nom,long,vn,cap;
+ object o_line,type;   
+ string nm;
+ int nlp;
+ set s_line;
+ 
+ ClearOutput();
+             
+ s_line=AllRelevant('ElmLne');
+ o_line=s_line.First();            
+ printf('Name;Type;Inom(kA);Vom(kV);NLP;Long(km);CapLin;');
+  
+ while(o_line){ 
+  i_nom=o_line:e:Inom_a; !asignando corriente nominal 
+  !o_line:e:dline=250; !reasignando valor a la longitud de linea
+  long=o_line:e:dline;!asignando valor de longitud
+  type=o_line:typ_id; !devolver libreria
+  nm=o_line:loc_name; !devuelve el nombre del objeto 
+  !o_line:t:uline=91;!asignando tensión a libreria
+  vn=o_line:t:uline; !devuelve parámetro dentro de la libreria especifica
+  nlp=o_line:nlnum; !lns en paralelo
+  cap=o_line:t:cline;!Devolver el parámetro de capacitancia (LIB)   
+  printf('%s;%o;%1.3f;%1.2f;%i;%1.2f;%1.3f',nm,type,i_nom,vn,nlp,long,cap);
+  o_line=s_line.Next();
+              }
