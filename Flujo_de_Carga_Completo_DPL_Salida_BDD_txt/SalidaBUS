@@ -1,0 +1,55 @@
+  
+  object O;
+  string case;
+  set xSet;      
+  object xObject;
+  
+  string str_loc_name;
+  string str_cpGrid;
+  string str_loc_name2;
+  
+  double dou_vmax;
+  double dou_vmin;
+  int    int_iUsage;
+  double dou_uknom;
+  int    int_outserv;
+  double dou_u;
+  double dou_Ul;
+  
+  string tipo;
+  int out,k,status;
+     
+  ! Extraer nombre de caso
+  O=ActiveCase();
+  case=O:loc_name;
+  
+  ! Ordenar 
+  xSet=AllRelevant('*.ElmTerm'); 
+  xSet.SortToVar(0, 'loc_name');
+  
+  ! Escribir en archivo .csv
+  for(xObject = xSet.First();xObject;xObject = xSet.Next())
+  {
+     out = xObject:outserv;
+     k   = xObject.IsRelevant();
+     dou_uknom = xObject:e:uknom;
+     status = xObject.IsEnergized();
+       
+     if ({out=0}.and.{k=1}.and.{dou_uknom>50}.and.{status=1})   ! out==>0=ES/1=FS. k==>0=No es relevante/1=Si es relevante
+     {
+     tipo = 'BUS';
+     str_loc_name   = xObject:e:loc_name;
+     str_cpGrid     = xObject:r:cpGrid:b:loc_name;
+     str_loc_name2  = xObject:b:loc_name;
+     dou_vmax = xObject:e:vmax;
+     dou_vmin = xObject:e:vmin;
+     int_iUsage = xObject:e:iUsage;
+  
+     int_outserv = xObject:e:outserv; 
+     dou_u = xObject:m:u;
+     dou_Ul = xObject:m:Ul;
+  
+     fprintf(2,'%s-%s-%s,%s,%s,%s,%s,%s,%f,%f,%d,%f,%d,%f,%f\n',str_loc_name,str_loc_name2,case,str_loc_name,tipo,case,str_cpGrid,str_loc_name2,dou_vmax,dou_vmin,int_iUsage,dou_uknom,int_outserv,dou_u,dou_Ul);
+     }
+  }
+  
