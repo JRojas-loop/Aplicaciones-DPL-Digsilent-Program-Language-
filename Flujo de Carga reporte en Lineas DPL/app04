@@ -1,0 +1,29 @@
+ object o_line,ldf,typ;
+ set s_line;
+ int val; 
+ double inom,long,vn;
+ 
+ ClearOutput();
+ 
+ s_line=AllRelevant('ElmLne');
+ ldf=GetCaseObject('ComLdf');
+ val=ldf.Execute();
+ 
+ if(.not.val){
+    
+    o_line=s_line.First();
+    printf('Line|Lib|In(kA)|Long(km)|Vn(kV)|');
+    while(o_line){
+          typ=o_line:typ_id;
+          inom=o_line:Inom_a;
+          long=o_line:dline;
+          vn=o_line:t:uline; 
+          printf('%o|%o|%1.2f|%1.2f|%1.2f|',o_line,typ,inom,long,vn);
+          o_line=s_line.Next();
+                 }          
+                 
+    printf('Se ejecutó correctamente: %o',ldf);
+             }
+ else{printf('No convergencia');}            
+             
+ 
