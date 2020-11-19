@@ -1,0 +1,41 @@
+   
+    object O;
+    string case;
+    set xSet;      
+    object xObject;
+    
+    string str_loc_name;
+    string str_cpGrid;
+    string str_loc_name2;
+    int int_outserv;
+    int int_ncapa;
+    int int_iswitch;
+    
+    string tipo;
+    int out;
+       
+    ! Extraer nombre de caso
+    O=ActiveCase();
+    case=O:loc_name;
+    
+    ! Ordenar 
+    xSet=AllRelevant('*.ElmShnt'); 
+    xSet.SortToVar(0, 'loc_name');
+    
+    ! Escribir en archivo .csv
+    for(xObject = xSet.First();xObject;xObject = xSet.Next())
+    {
+       out = xObject:outserv;  
+       if (out=0)   ! out==>0=ES/1=FS. 
+       {
+       tipo = 'BSH';
+       str_loc_name   = xObject:b:loc_name;
+       str_cpGrid     = xObject:r:cpGrid:b:loc_name;
+       str_loc_name2  = xObject:b:loc_name;
+       int_outserv = xObject:e:outserv;
+       int_ncapa = xObject:e:ncapa;
+       int_iswitch = xObject:e:iswitch;
+    
+       fprintf(2,'%s-%s-%s,%s,%s,%s,%s,%s,%d,%d,%d\n',str_loc_name, str_loc_name2, case,str_loc_name, tipo, case,	str_cpGrid,	str_loc_name2,	int_outserv,	int_ncapa,	int_iswitch);
+       }
+    }
