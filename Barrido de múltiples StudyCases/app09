@@ -1,0 +1,24 @@
+object prj,case,sop,o_case;
+set s_cases;
+
+s_cases=set_cases.All();
+
+ClearOutput();
+
+
+prj=GetActiveProject();
+
+
+o_case=s_cases.First();
+while(o_case){
+o_case.Activate(); !Activar el estudio de caso especifico
+
+case=ActiveCase();
+sop=GetActiveScenario();
+
+printf('Proyecto: %o',prj);
+printf('Estudio de Caso: %o',case);
+printf('Escenario de Operación: %o',sop);
+  
+  o_case=s_cases.Next();
+            }
