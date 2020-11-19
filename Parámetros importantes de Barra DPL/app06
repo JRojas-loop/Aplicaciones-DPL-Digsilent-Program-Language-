@@ -1,0 +1,18 @@
+set s_bus;  
+object o_bus;
+double vn,vset,vmax,vmin;
+
+ClearOutput();
+s_bus=AllRelevant('ElmTerm');
+o_bus=s_bus.First();
+
+printf('Bus;Vn;vset;vmax;vmin');
+
+while(o_bus){  
+     vn=o_bus:uknom;
+     vset=o_bus:vtarget;
+     vmax=o_bus:vmax;
+     vmin=o_bus:vmin;
+     printf('%o;%1.2f;%1.2f;%1.2f;%1.2f',o_bus,vn,vset,vmax,vmin);
+     o_bus=s_bus.Next();   
+            }
