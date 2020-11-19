@@ -1,0 +1,120 @@
+   
+    set s1, s2;
+    object o1, o2, com;
+    int i, x, error, count, cmp, relev, oos, filaexcel;
+    double d, vnom, ikss;
+    string s, name, nombrece, nombrebarra, tipo; 
+    
+    s1 = CASOSE.All();  
+    s2 = BARRASCC.All();
+    resultado:barras = BARRASCC;
+    
+    error = xlStart();
+    if(error){
+      printf('no se puede conectar con excel');
+    }
+    xlOpenWorkbook(RutaExcel);
+    !xlSetVisible(1);
+    xlRunMacro('borrar');
+    xlSaveWorkbook();
+    
+    count = xlGetWorksheetCount();
+    
+    while(count>0){
+      name = xlGetWorksheetName(count);
+      cmp = strcmp(name, 'BarrasDGS');
+      if(cmp = 0){
+        xlActivateWorksheet(count);
+        count = 0;
+      }
+      else{
+        count -= 1;
+      }
+    }
+    
+    filaexcel = 1;
+    for(o2 = s2.First(); o2; o2 = s2.Next()){
+      filaexcel = filaexcel + 1;
+      xlSetValue(1,filaexcel,o2:e:loc_name);
+      
+    }
+    xlSetColumnWidth(1,-1);
+    
+    count = xlGetWorksheetCount();
+    
+    while(count>0){
+      name = xlGetWorksheetName(count);
+      cmp = strcmp(name, 'REPORTE');
+      if(cmp = 0){
+        xlActivateWorksheet(count);
+        count = 0;
+      }
+      else{
+        count -= 1;
+      }
+    }
+    
+    filaexcel = 1;
+    for(o1 = s1.First(); o1; o1 = s1.Next()){
+      resultado:caso = o1;
+      nombrece = o1:loc_name;
+      
+      EchoOff();
+      o1.Activate();
+      EchoOn();
+      printf('Caso Activo --> %s',nombrece);
+      resultado:tipoCC = 1;
+      resultado.Execute();
+      !----------------------  
+    
+      for(o2 = s2.First(); o2; o2 = s2.Next()){
+        relev = o2.IsRelevant();
+        oos = o2:outserv;
+      
+        if({relev=1}.and.{oos=0}){
+          filaexcel = filaexcel +1;
+          nombrebarra = o2:loc_name;
+          vnom = o2:e:uknom;
+          ikss = o2:m:Ikss;
+          tipo = sprintf('1f-T');
+      
+          xlSetValue(1, filaexcel, nombrece); 
+          xlSetValue(2, filaexcel, nombrebarra);
+          xlSetValue(3, filaexcel, vnom);
+          xlSetValue(4, filaexcel, tipo);
+          xlSetValue(6, filaexcel, ikss);
+        }
+      }
+        
+      resultado:tipoCC = 3;
+      resultado.Execute();
+      !--------------------------  
+      for(o2 = s2.First(); o2; o2 = s2.Next()){
+        relev = o2.IsRelevant();
+        oos = o2:outserv;
+      
+        if({relev=1}.and.{oos=0}){
+          filaexcel = filaexcel +1;
+          nombrebarra = o2:loc_name;
+          vnom = o2:e:uknom;
+          ikss = o2:m:Ikss;
+          tipo = sprintf('3f');
+      
+          xlSetValue(1, filaexcel, nombrece); 
+          xlSetValue(2, filaexcel, nombrebarra);
+          xlSetValue(3, filaexcel, vnom);
+          xlSetValue(4, filaexcel, tipo);
+          xlSetValue(6, filaexcel, ikss);
+        }
+      }    
+    } 
+    
+    for(i=1;i<=5;i=i+1){
+    xlSetColumnWidth(i,-1);
+    } 
+    
+    xlSaveWorkbook();
+    xlTerminate();
+  
+  
+  
