@@ -1,0 +1,20 @@
+ double i_nom,long,vn,cap;
+ object type;   
+ string nm;
+ int val1,val2;
+ 
+ ClearOutput();
+ 
+ type=line1.GetType();!devuelve tipo de libreria
+ printf('La LT utiliza la Lib: %o',type);
+ val1=line1.IsCable();!confirma si(1) es o no(0) cable  
+ if(val1){
+       printf('%o es un cable',line1);
+        }
+ else {printf('%o no es un cable',line1);}   
+ 
+  val2=line1.IsNetCoupling ()();!confirma si(1) es o no(0) acoplada  
+ if(val2){
+       printf('%o es acoplada',line1);
+        }
+ else {printf('%o no es acoplada',line1);}    
