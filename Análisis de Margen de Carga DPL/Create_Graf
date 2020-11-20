@@ -1,0 +1,68 @@
+   
+    !Creación de gráfica
+  object aGrf,aPage,aPlot,o_bus,o_line,o_tr3;  
+  set s_bus,s_elm,s_line,s_tr3; 
+  int i;
+  
+  EchoOff();
+  s_bus=set_elm.AllBars();  
+  s_line=set_elm.AllLines();
+  s_tr3=set_elm.GetAll('ElmTr3');   
+  aGrf=GetGraphBoard();!Obtener el objeto gráfica
+  
+  if(aGrf){
+  ! Obtener el Panel de Intrumentos Virtuales, con nombre "Voltage"
+  aPage=aGrf.GetPage('Resultados',1);!Se agrega la página
+    if (aPage){
+    
+    aPlot=aPage.GetVI('Tensiones','VisPlot',1);!Crea la gráfica RST,tipo "Visplot"   
+        if (aPlot) {
+          aPlot.Clear();!Limpia el gráfico si existe 
+
+             o_bus=s_bus.First();
+           !Asignamos variables del ("ElmRes") Res  
+             while(o_bus){
+                aPlot.AddResVars(Res,'m:u',o_bus);
+                aPlot.SetAutoScaleX(1);!Autoescala en eje X
+                aPlot.SetAutoScaleY(1);!Autoescala en eje Y
+                o_bus=s_bus.Next(); !Siguiente resultado de bus
+                         }
+                   }
+              }
+       
+        if (aPage){
+    aPlot=aPage.GetVI('Trafos','VisPlot',1);!Crea la gráfica RST,tipo "Visplot"   
+        if (aPlot) {
+          aPlot.Clear();!Limpia el gráfico si existe 
+
+             o_tr3=s_tr3.First();
+           !Asignamos variables del ("ElmRes") Res  
+             while(o_tr3){
+                aPlot.AddResVars(Res,'c:loading',o_tr3);
+                aPlot.SetAutoScaleX(1);!Autoescala en eje X
+                aPlot.SetAutoScaleY(1);!Autoescala en eje Y
+                o_tr3=s_tr3.Next(); !Siguiente resultado de bus
+                         }
+                   }    
+                  } 
+        if (aPage){
+    aPlot=aPage.GetVI('Lineas','VisPlot',1);!Crea la gráfica RST,tipo "Visplot"   
+        if (aPlot) {
+          aPlot.Clear();!Limpia el gráfico si existe 
+
+             o_line=s_line.First();
+           !Asignamos variables del ("ElmRes") Res  
+             while(o_line){
+                aPlot.AddResVars(Res,'c:loading',o_line);
+                aPlot.SetAutoScaleX(1);!Autoescala en eje X
+                aPlot.SetAutoScaleY(1);!Autoescala en eje Y
+                o_line=s_line.Next(); !Siguiente resultado de bus
+                         }
+                   }    
+                  }            
+     
+     aPage.SetTile(0);                          
+              
+          } 
+  EchoOn();        
+          
