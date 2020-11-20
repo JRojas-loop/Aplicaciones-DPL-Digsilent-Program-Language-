@@ -1,0 +1,80 @@
+
+  object o_elm,ldf,aGrf,aPage,aPlot,std;
+  int val,i,class1,class2,class3,class4;
+  double p1; 
+  set s_elm,s_obj,ss_elm; 
+  
+  ClearOutput();
+  std=GetActiveScenario(); !Devolviendo el escenario de operación
+  
+   
+   s_elm=set_elm.All(); !Creando Set de elementos a monitorear 
+  
+  ldf=GetCaseObject('ComLdf');!Metodo FC  
+  val=0;   
+   
+   !Asignando las variables resultado a monitorear
+   !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° 
+    Res.Clear();!Reinicia las variables en el SetResultados 
+    
+    o_elm=s_elm.First();
+    while(o_elm){  
+     class1=o_elm.IsClass('ElmTerm');
+     class2=o_elm.IsClass('ElmLod');  
+     class3=o_elm.IsClass('ElmLne');
+     class4=o_elm.IsClass('ElmTr3');  
+        if(class1){Res.AddVars(o_elm,'m:u');             
+                  }
+        if(class2){Res.AddVars(o_elm,'e:scale0');
+                  }
+        if(class3){Res.AddVars(o_elm,'c:loading');
+                  }
+        if(class4){Res.AddVars(o_elm,'c:loading');
+                  }
+            o_elm=s_elm.Next();                    
+                }
+   !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+  
+  !Inician iteracion y modificación de scale lods
+  !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°          
+  
+  while(.not. val){
+    EchoOff();
+    val=ldf.Execute();
+    EchoOn();
+    Res.Write();!se escriben los resultados por defecto de calc 
+    
+    printf('Escala: %1.3f',1+(paso/100)*i);
+      o_elm=s_elm.First();
+      while(o_elm){
+        class2=o_elm.IsClass('ElmLod');    
+            if(class2){
+              o_elm:e:scale0=1+(paso/100)*i;!Actualizar paso
+                      }
+                   o_elm=s_elm.Next();   
+                  }  
+         i+=1;
+    
+         }  
+  !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+  
+  
+  !Devolviendo a la normalidad.
+  !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+      o_elm=s_elm.First();
+      while(o_elm){
+        class2=o_elm.IsClass('ElmLod');    
+            if(class2){
+              o_elm:e:scale0=1;
+                      }
+                   o_elm=s_elm.Next();   
+                  } 
+
+      std.Save();
+  !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+  
+    Create_Graf.Execute(); 
+         
+      
+
+
