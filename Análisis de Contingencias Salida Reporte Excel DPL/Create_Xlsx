@@ -1,0 +1,181 @@
+    int error,row,col,val,cvg,row_b,row_t,row_l; 
+    string ruta_n,nm,nm_case;
+    set s_elm,s_ctg,s_case;
+    object o_elm, ldf,o_elm_ctg,o_elm_type,o_case,o_std;  
+    double v_kv,v_pu,i_n,v_n,mva,carga,mva_h,carga_t;
+    
+
+    
+    !°°°°°°°°°°°°°°°°°°°Iniciando M.Excel°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    error = xlStart(); !start MS Excel
+    if (error) {
+    Error('No puede iniciarse MS Excel application');
+    exit();
+               }            
+    xlSetDebug(1);
+    xlSetVisible(1); !Mostrar Excel 1:visible 0:invisible             
+    !xlNewWorkbook(); !Crear nuevo libro   
+    ruta_n=sprintf('%s%s',ruta,'resultados.xlsx');    
+    xlOpenWorkbook(ruta_n);
+    
+    
+    !°°°°°°°°°°°°°°°°°°°°°°°°°Buses°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    xlSetWorksheetName(1, 'Buses'); !Denominar a la hoja index 1 'CC'  
+    xlActivateWorksheet(1); 
+      row=1; col=1;
+    xlSetValue(col,row,'Contingencia');
+    xlSetValue(col+1,row,'Caso');
+    xlSetValue(col+2,row,'Bus');!Asigna valor (columna,fila, Valor_asignar)
+    xlSetValue(col+3,row,'v(kV)');
+    xlSetValue(col+4,row,'v(p.u)'); 
+    row+=1;
+
+    !°°°°°°°°°°°°°°°°°°°°°°°°°Lineas°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    xlSetWorksheetName(2, 'Lineas'); !Denominar a la hoja index 1 'CC'  
+    xlActivateWorksheet(2); 
+      row=1; col=1;
+    xlSetValue(col,row,'Contingencia');
+    xlSetValue(col+1,row,'Caso');
+    xlSetValue(col+2,row,'Linea');!Asigna valor (columna,fila, Valor_asignar)
+    xlSetValue(col+3,row,'Cap(MVA)');
+    xlSetValue(col+4,row,'Carga(%)'); 
+    row+=1;
+           
+        !°°°°°°°°°°°°°°°°°°°°°°°°°Trafos°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    xlSetWorksheetName(3, 'Trafos'); !Denominar a la hoja index 1 'CC'  
+    xlActivateWorksheet(3);
+      row=1; col=1;
+    xlSetValue(col,row,'Contingencia');
+    xlSetValue(col+1,row,'Caso');
+    xlSetValue(col+2,row,'Trafo');!Asigna valor (columna,fila, Valor_asignar)
+    xlSetValue(col+3,row,'Cap(MVA)');
+    xlSetValue(col+4,row,'Carga(%)'); 
+    row+=1;       
+    
+    row_b=2; row_l=2; row_t=2;
+    
+   !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+   
+    s_case=set_cases.All();
+    o_case=s_case.First();
+    
+    while(o_case){
+        o_case.Activate();
+        o_std=GetActiveScenario();   
+        o_std.Deactivate(0); !Descartando cambios
+        o_std.Activate(); !Reestableciendo el scenario de operacion
+        ResetCalculation();    
+        
+        nm_case=o_case:e:loc_name; 
+        printf('°°°°°%o°°°°°',o_case);
+ 
+    !Almacenando data en celdas
+        s_ctg=set_elm_ctg.All();
+    ldf=GetCaseObject('ComLdf');
+    s_elm=set_elm.All(); !Set de all objects del caso
+    
+    for(o_elm_ctg=s_ctg.First();o_elm_ctg;o_elm_ctg=s_ctg.Next()){
+           
+           o_elm_ctg.SwitchOff(); !Aperturar elemento en ctg
+             EchoOff();
+             cvg=ldf.Execute();
+             
+             if(cvg=0){
+              printf('Calculate N-1 Ctg: %o',o_elm_ctg);
+              for(o_elm=s_elm.First();o_elm;o_elm=s_elm.Next()){ 
+                   
+                 val=o_elm.IsClass('ElmTerm');
+                    if(val=1){
+                       !printf('%o',o_elm);
+                     
+                        nm=o_elm:e:loc_name;
+                        v_kv=o_elm:m:Ul;
+                        v_pu=o_elm:m:u;
+                        xlActivateWorksheet(1); 
+                        xlSetValue(col,row_b,o_elm_ctg:loc_name); 
+                        xlSetValue(col+1,row_b,nm_case);
+                        xlSetValue(col+2,row_b,nm);
+                        xlSetValue(col+3,row_b,v_kv);
+                        xlSetValue(col+4,row_b,v_pu);
+                        row_b+=1;     
+                              } 
+                  val=o_elm.IsClass('ElmLne');
+                    if(val=1){
+                       !printf('%o',o_elm);
+
+                        nm=o_elm:e:loc_name;
+                        i_n=o_elm:e:Inom_a;
+                        v_n=o_elm.Unom();
+                        mva=sqrt(3)*v_n*i_n;
+                        carga=o_elm:c:loading;
+                        xlActivateWorksheet(2); 
+                        xlSetValue(col,row_l,o_elm_ctg:loc_name); 
+                        xlSetValue(col+1,row_l,nm_case);
+                        xlSetValue(col+2,row_l,nm);
+                        xlSetValue(col+3,row_l,mva);
+                        xlSetValue(col+4,row_l,carga);
+                        row_l+=1;     
+                              } 
+                  val=o_elm.IsClass('ElmTr3');
+                    if(val=1){
+                       !printf('%o',o_elm);
+                        nm=o_elm:e:loc_name;
+                        o_elm_type=o_elm:e:typ_id;
+                        mva_h=o_elm_type:e:strn3_h;
+                        carga_t=o_elm:c:loading;
+                        xlActivateWorksheet(3); 
+                        xlSetValue(col,row_t,o_elm_ctg:loc_name); 
+                        xlSetValue(col+1,row_t,nm_case);
+                        xlSetValue(col+2,row_t,nm);
+                        xlSetValue(col+3,row_t,mva_h);
+                        xlSetValue(col+4,row_t,carga_t);
+                        row_t+=1;    
+                              }
+                                           
+                    else{
+                    continue;
+                          }          
+                                  
+                                  }
+                               }         
+              else{ 
+              printf('Calculate N-1 Ctg: %o No Convergencia',o_elm_ctg);
+               
+                        xlActivateWorksheet(1); 
+                        xlSetValue(col,row_b,o_elm_ctg:loc_name);  
+                        xlSetValue(col+1,row_b,nm_case);
+                        xlSetValue(col+2,row_b,'NC');
+                        xlSetValue(col+3,row_b,'NC');
+                        xlSetValue(col+4,row_b,'NC');
+                        row_b+=1;     
+                              
+                        xlActivateWorksheet(2); 
+                        xlSetValue(col,row_l,o_elm_ctg:loc_name);  
+                        xlSetValue(col+1,row_l,nm_case);
+                        xlSetValue(col+2,row_l,'NC');
+                        xlSetValue(col+3,row_l,'NC');
+                        xlSetValue(col+4,row_l,'NC');
+                        row_l+=1;     
+
+                        xlActivateWorksheet(3); 
+                        xlSetValue(col,row_t,o_elm_ctg:loc_name);  
+                        xlSetValue(col+1,row_t,nm_case);
+                        xlSetValue(col+2,row_t,'NC');
+                        xlSetValue(col+3,row_t,'NC');
+                        xlSetValue(col+4,row_t,'NC');
+                        row_t+=1;     
+                              
+                  }
+                                                  
+             !o_elm_ctg.SwitchOn();   
+        !Artificio para devolver el escenario por defecto
+        o_std.Deactivate(0); !Descartando cambios
+        o_std.Activate(); !Reestableciendo el scenario de operacion
+        ResetCalculation();       
+                                
+                                                                  } 
+  
+        o_case=s_case.Next();
+                                   
+                }  
+                  
