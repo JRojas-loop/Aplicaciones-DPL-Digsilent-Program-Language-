@@ -1,0 +1,17 @@
+
+  !Ejemplo_18 analizando contingencias  
+  
+  object o_elm,o_elm_ctg,ldf,o_case,o_std;
+  set s_elm,s_ctg,s_case;
+  int val,col,row,cvg;
+  string nm,nm_case;
+  double v_kv,v_pu;
+  int error;
+
+  ClearOutput();
+      
+  Create_Xlsx.Execute(); !Creando salida xlsx, ejecutando DPL incluido en DPLprincipal 
+                
+       !xlTerminate();
+  EchoOn();                            
+                                 
