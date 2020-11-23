@@ -1,0 +1,86 @@
+  object cc,o_line,o_fold;
+  int val,fs,enr; 
+  double scc,icc,ip,pkm;     
+  set s_line,s_fold;
+  
+  ClearOutput(); 
+!°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+!Limpiando salida de resultados
+
+s_fold=ElmRes.GetContents();
+o_fold=s_fold.First();
+while(o_fold){Delete(o_fold);o_fold=s_fold.Next();}
+                            
+!°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+ !Cálculo de Cortocircuito y recopilamiento de resultados en ElmRes 
+  cc=GetCaseObject('ComShc'); !objeto comando CC
+  s_line=SEL.All();
+  o_line=s_line.First();
+  EchoOff();
+   while(o_line){ 
+ 
+ 
+   !Creando ElmRes en DPL
+    o_res=ElmRes.CreateObject('ElmRes',o_line:loc_name);
+           
+  !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° 
+  Create_VarsRes.Execute(); !Creando las variables de resultado CC  
+  o_res=Create_VarsRes:o_res;  
+  o_res.Init();
+  o_res.SetAsDefault();
+  !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+           
+            
+            o_res.Clear();
+            cc:e:shcobj=o_line;
+            name_line=o_line:loc_name;out_o_line=o_line; 
+            cc:e:iopt_mde=1;!1:IEC60909
+            cc:e:iopt_shc='3psc';!'3psc':Falla trifásica  'spgf':falla mono-tierr           
+            cc:e:iopt_asc=0;!reporte de resultados 0:off 1:on           
+            fs=o_line:outserv;
+            enr=o_line.IsEnergized();
+            
+                for(pkm=0;pkm<=100;pkm+=dkm){
+                        cc:e:ppro=pkm; !distancia de ubic de la falla 
+                        
+                        if(.not.fs .and. enr){
+                        val=cc.Execute();!0:exitoso 1:no exitoso  
+                        
+                                                 
+                           if(.not.val){
+                         
+                                scc=o_line:m:Skss:busshc;
+                                icc=o_line:m:Ikss:busshc;
+                                ip=o_line:m:ip:busshc;
+                                
+                                printf('%o ejecutado en %o en el %%km=%1.1f',cc,o_line,pkm);
+                                printf('Scc:%1.3f MVA|Icc:%1.3f kA|ip=%1.3f kA',scc,icc,ip);   
+                                o_res.Write();   
+                                        }
+                                 
+                                else{
+                                printf('\ccCC no se ha calculado correctamente: %o',o_line);
+                                break;       
+                                    }  
+                           
+                                             } !fin de if not fs and enr
+                            else{
+                              printf('\ccLínea se encuentra FS: %o',o_line);
+                              o_line=s_line.Next();
+                              break;   
+                                }            
+                        
+
+                                          
+                                            }!fin bucle for
+                     
+                         !Creando Gráficas de curvas CC
+                         Create_Graf.Execute(); 
+                    !CC_data.Clear();                  
+                    o_line=s_line.Next();                  
+                                      
+               }!fin de bucle while
+ !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+
+               
+  EchoOn();
