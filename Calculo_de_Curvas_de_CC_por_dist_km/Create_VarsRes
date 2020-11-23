@@ -1,0 +1,17 @@
+  set s_line; 
+  object o_line,cc;
+  !creando variables de resultados
+  
+  o_res=Curve_CC:o_res;
+  o_res.Clear(); !Limpiando variable de resultados
+  s_line=SEL.All();
+  o_line=s_line.First();
+  cc=GetCaseObject('ComShc');
+  o_res.AddVars(cc,'e:ppro');
+  while(o_line){  
+  o_res.AddVars(o_line,'m:Skss:busshc');
+  o_res.AddVars(o_line,'m:Ikss:busshc');
+  o_res.AddVars(o_line,'m:ip:busshc'); 
+                               
+  o_line=s_line.Next();
+              }
