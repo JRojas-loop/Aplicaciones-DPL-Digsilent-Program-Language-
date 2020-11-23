@@ -1,0 +1,62 @@
+   
+    !Creación de gráfica
+  object aGrf,aPage,aPlot,o_bus,o_line,o_tr3,o_elm_ctg;
+  object o_gen,cgraf_elm_ctg,o_res_aux,o_res;  
+  set s_line,s_elm_ctg; 
+  int i,j,size_v;   
+  string label_res,filename,name_line;
+  
+  EchoOff(); 
+  j=1;
+  
+  o_line=Curve_CC:out_o_line;
+  name_line=Curve_CC:name_line; 
+  o_res_aux=Curve_CC:o_res;  
+  
+  aGrf=GetGraphBoard();!Obtener el objeto gráfica
+  
+  label_res=sprintf('RES_%s',name_line);
+  !o_res_aux=Curve_CC.AddCopy(o_res,label_res);
+  if(aGrf){
+  ! Obtener el Panel de Intrumentos Virtuales, con nombre "Voltage"
+  aPage=aGrf.GetPage(name_line,1);!Se agrega la página
+    if (aPage){
+    
+        aPlot=aPage.GetVI('Skss','VisPlot',1);!Crea la gráfica RST,tipo "Visplot"   
+            if (aPlot) {
+              aPlot.Clear();!Limpia el gráfico si existe 
+               !Asignamos variables del ("ElmRes") Res  
+                    aPlot.AddResVars(o_res_aux,'m:Skss:busshc',o_line);     
+                    aPlot.SetAutoScaleX(1);!Autoescala en eje X
+                    aPlot.SetAutoScaleY(1);!Autoescala en eje Y             
+                       } 
+        aPlot=aPage.GetVI('Ikss','VisPlot',1);!Crea la gráfica RST,tipo "Visplot"   
+        if (aPlot) {
+          aPlot.Clear();!Limpia el gráfico si existe 
+           !Asignamos variables del ("ElmRes") Res  
+                aPlot.AddResVars(o_res_aux,'m:Ikss:busshc',o_line);     
+                aPlot.SetAutoScaleX(1);!Autoescala en eje X
+                aPlot.SetAutoScaleY(1);!Autoescala en eje Y             
+                   }               
+       aPlot=aPage.GetVI('Ip','VisPlot',1);!Crea la gráfica RST,tipo "Visplot"   
+        if (aPlot) {
+          aPlot.Clear();!Limpia el gráfico si existe 
+           !Asignamos variables del ("ElmRes") Res  
+                aPlot.AddResVars(o_res_aux,'m:ip:busshc',o_line);     
+                aPlot.SetAutoScaleX(1);!Autoescala en eje X
+                aPlot.SetAutoScaleY(1);!Autoescala en eje Y             
+                   }                
+
+                 aPage.SetTile(0);  
+              }          
+     
+              aPage.SetTile(0);
+                        
+              
+          }   
+          
+  aPage.DoAutoScaleY();!Ajustar pagina en escala Y
+  aPage.DoAutoScaleX();!Ajustar pagina en escala X                  
+           
+  EchoOn();        
+          
