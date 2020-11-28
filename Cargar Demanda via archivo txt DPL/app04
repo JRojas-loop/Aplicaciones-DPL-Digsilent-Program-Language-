@@ -1,0 +1,22 @@
+  set s_lod;
+  object o_lod;
+  int val;
+  string str_lod;
+  double plod,qlod;
+  
+  ClearOutput();
+  fopen(ruta,'r',1);
+  SetLineFeed(0);!Desactiva pie de linea automático
+  s_lod=AllRelevant('ElmLod');
+  
+  while(val<>-1){
+  val=fscanfsep(1,'%s;%f;%f;',str_lod,plod,qlod,';');
+  if(val=-1){break;}
+  str_lod=sprintf('%s.ElmLod',str_lod);!artificio de búsqueda
+  o_lod=s_lod.FirstFilt(str_lod);
+  
+  o_lod:plini=plod;!potencia activa
+  o_lod:qlini=qlod;!pot reactiva 
+  printf('%o;P=%1.3f;Q=%1.3f\n',o_lod,o_lod:plini,o_lod:qlini);              
+                 }
+  
