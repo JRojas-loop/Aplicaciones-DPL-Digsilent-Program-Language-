@@ -1,0 +1,19 @@
+ int error,i;
+ 
+ error=xlStart(); !Iniciamos comunicación con Microsoft Excel
+ 
+ !Condicionales frente al error
+ if(error){
+  Error('No puede ejecutarse M.Excel');
+  exit();
+          }
+          
+ xlSetVisible(1); !1:visible 0:invisible u oculto
+ xlNewWorkbook();!Crear un nuevo libro 
+ xlSetWorksheetName(1,'HojaDPL');
+ 
+ for(i=1;i<2000;i+=1){
+   xlSetValue(1,i,20); !Asignar valor (Columna,Fila,Valor_asignar)
+              }
+ 
+ xlTerminate();!Cierre la API PFD-Excel                     
