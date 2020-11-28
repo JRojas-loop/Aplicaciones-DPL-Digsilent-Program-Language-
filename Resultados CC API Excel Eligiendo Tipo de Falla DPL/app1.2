@@ -1,0 +1,65 @@
+  
+  !Exportando Results_CC
+ 
+  int error,i,row,col;
+  object cc,o_bus; 
+  string ruta,typef,falla;
+  set buses;
+  double ik,sk; 
+  int val;  
+  
+  ClearOutput();
+   !°°°°°°°°°°°°°°°°°°°Iniciando M.Excel°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    error = xlStart(); !start MS Excel
+    if (error) {
+    Error('No puede iniciarse MS Excel application');
+    exit();
+               } 
+                          
+    xlSetVisible(1); !Mostrar Excel 1:visible 0:invisible             
+    xlNewWorkbook(); !Crear nuevo libro
+    xlSetWorksheetName(1, 'CC'); !Denominar a la hoja index 1 'CC'  
+      row=1; col=1; !artificio
+    xlSetValue(col,row,'Bus'); !Asigna valor (columna,fila, Valor_asignar)
+    xlSetValue(col+1,row,'Tipo_Falla');
+    xlSetValue(col+2,row,'Scc(MVA)');
+    xlSetValue(col+3,row,'Icc(kA)'); 
+    row+=1; !artificio 
+   !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+  
+  !°°°°°Iniciando calculo CC°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° 
+  buses=set_buses.All(); 
+
+  for(o_bus=buses.First();o_bus;o_bus=buses.Next()){      
+       EchoOff(); 
+          cc=GetCaseObject('ComShc'); 
+          if(n=1){falla='3psc';}!falla trifásica
+          else if(n=2){falla='spgf';}
+          
+          cc:iopt_shc=falla; !tipo de falla
+          typef=cc:iopt_shc; !Devolver el tipo de falla ejecutada
+          cc:e:shcobj=o_bus; !Escoger bus especifico de CC
+          cc:e:iopt_asc=0; !Desactivar Show results
+          val=cc.Execute(); 
+           !printf('%o',o_bus); !Solo para registrar error
+           
+           if(.not. val){
+          sk=o_bus:m:Skss;	!MVA	Potencia de CC inicial
+          ik=o_bus:m:Ikss;	!kA	  Corriente de CC inicial
+          printf('%s:%o;Scc=%1.3f MVA;Icc=%1.3f kA',typef,o_bus,sk,ik);                                    
+
+          xlSetValue(col,row,o_bus:e:loc_name); !Asigna valor (columna,fila, Valor_asignar)
+          xlSetValue(col+1,row,typef);
+          xlSetValue(col+2,row,sk);
+          xlSetValue(col+3,row,ik);                   
+          row+=1; 
+                   }
+           else    {
+                printf('CC no calculado en %o',o_bus);
+                exit();  
+                   }
+                                                    }                                          
+       EchoOn();    
+ !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°                         
+  printf('Exportación finalizada');
+  xlTerminate();                        
