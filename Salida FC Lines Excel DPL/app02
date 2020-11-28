@@ -1,0 +1,120 @@
+ object o_line,ldf,typ,bus1,bus2;
+ set s_line;
+ int fs,error,row,col,val,cvg,row_b,row_t,row_l,enr;  
+ double inom,long,vn,ib1,ib2,sb1,sb2,pb1,pb2,qb1,qb2,load;
+ string ruta_n; 
+ 
+ 
+ ClearOutput();
+ EchoOff();
+ 
+ !°°°°°°°°°°°°°°°°°°°Iniciando M.Excel°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    error = xlStart(); !start MS Excel
+    if (error) {
+    Error('No puede iniciarse MS Excel application');
+    exit();
+               }            
+    xlSetDebug(1);
+    xlSetVisible(1); !Mostrar Excel 1:visible 0:invisible             
+    !xlNewWorkbook(); !Crear nuevo libro       
+    xlOpenWorkbook(ruta); !abrir un libro mediante dirección
+ !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    
+    !°°°°°°°°°°°°°°°°°°°°°°°°°Lines°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+    xlSetWorksheetName(1, 'Lines'); !Denominar a la hoja index 1 'CC'  
+    xlActivateWorksheet(1); 
+      row=1; col=1;
+    xlSetValue(col,row,'Line');
+    xlSetValue(col+1,row,'Lib');
+    xlSetValue(col+2,row,'Long(km)');!Asigna valor (columna,fila, Valor_asignar)
+    xlSetValue(col+3,row,'Bus1');
+    xlSetValue(col+4,row,'Bus2');
+    xlSetValue(col+5,row,'Ib1(kA)');
+    xlSetValue(col+6,row,'Ib2(kA)');
+    xlSetValue(col+7,row,'Sb1(MVA)');
+    xlSetValue(col+8,row,'Sb2(MVA)');
+    xlSetValue(col+9,row,'Pb1(MW)');
+    xlSetValue(col+10,row,'Pb2(MW)');
+    xlSetValue(col+11,row,'Qb1(Mvar)');
+    xlSetValue(col+12,row,'Qb2(Mvar)');
+    xlSetValue(col+13,row,'Load(%)'); 
+    row+=1;
+    !°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+ 
+ s_line=AllRelevant('ElmLne');
+ ldf=GetCaseObject('ComLdf');
+ val=ldf.Execute();
+ 
+ 
+ if(.not.val){
+    
+    o_line=s_line.First();
+    !printf('Line|Lib|Long(km)|Bus1|Bus2|Ib1(kA)|Ib2(kA)|Sb1(MVA)|Sb2(MVA)|Pb1(MW)|Pb2(MW)|Qb1(MVar)|Qb2(MVar)|Load(%%)');
+    while(o_line){
+          fs=o_line:outserv; !0:es 1:fs
+          enr=o_line.IsEnergized();
+          if(.not.fs .and. enr){ 
+            typ=o_line:typ_id;
+            long=o_line:dline; 
+            bus1=o_line:bus1;bus1=bus1:cterm;bus1=bus1:cpSubstat;
+            bus2=o_line:bus2;bus2=bus2:cterm;bus2=bus2:cpSubstat;
+            ib1=o_line:m:I:bus1;
+            ib2=o_line:m:I:bus2;
+            sb1=o_line:m:S:bus1;
+            sb2=o_line:m:S:bus2;
+            pb1=o_line:m:P:bus1;
+            pb2=o_line:m:P:bus2;
+            qb1=o_line:m:Q:bus1;
+            qb2=o_line:m:Q:bus2;
+            load=o_line:c:loading; 
+            
+                       xlActivateWorksheet(1); 
+                        xlSetValue(col,row,o_line:loc_name);
+                        xlSetValue(col+1,row,typ:loc_name);
+                        xlSetValue(col+2,row,long);!Asigna valor (columna,fila, Valor_asignar)
+                        xlSetValue(col+3,row,bus1:loc_name);
+                        xlSetValue(col+4,row,bus2:loc_name);
+                        xlSetValue(col+5,row,ib1);
+                        xlSetValue(col+6,row,ib2);
+                        xlSetValue(col+7,row,sb1);
+                        xlSetValue(col+8,row,sb2);
+                        xlSetValue(col+9,row,pb1);
+                        xlSetValue(col+10,row,pb2);
+                        xlSetValue(col+11,row,qb1);
+                        xlSetValue(col+12,row,qb2);
+                        xlSetValue(col+13,row,load); 
+                        row+=1; 
+            
+            
+          !printf('%o|%o|%1.2f|%o|%o|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f|%1.2f',o_line,typ,long,bus1,bus2,ib1,ib2,sb1,sb2,pb1,pb2,qb1,qb2,load);
+                  }
+          else{printf('%o: \ccFS',o_line);
+          
+                        xlActivateWorksheet(1); 
+                        xlSetValue(col,row,o_line:loc_name);  
+                        xlSetValue(col+1,row,typ:loc_name);
+                        xlSetValue(col+2,row,'FS');
+                        xlSetValue(col+3,row,'FS');
+                        xlSetValue(col+4,row,'FS');   
+                        xlSetValue(col+5,row,'FS');
+                        xlSetValue(col+6,row,'FS');
+                        xlSetValue(col+7,row,'FS');
+                        xlSetValue(col+8,row,'FS');
+                        xlSetValue(col+9,row,'FS');
+                        xlSetValue(col+10,row,'FS');
+                        xlSetValue(col+11,row,'FS');
+                        xlSetValue(col+12,row,'FS');  
+                        xlSetValue(col+13,row,'FS');
+                        
+                        row+=1;     
+          
+                  }
+          o_line=s_line.Next();
+                 }
+                 
+                 
+    printf('Se ejecutó correctamente: %o',ldf);
+             }
+ else{printf('No convergencia');}            
+             
+ EchoOn();
