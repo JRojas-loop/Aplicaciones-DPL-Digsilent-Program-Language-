@@ -1,0 +1,18 @@
+  
+  !Obtener todos los studycases de un proyecto vía código
+  object prj,o_elm,o_case;
+  set s_elm,s_cases;            
+  
+  ClearOutput();
+  prj=ActiveProject();
+  s_elm=prj.GetContents();!devuelve los objetos internos de un objeto
+  o_elm=s_elm.FirstFilt('Study Cases');   
+  printf('%o',o_elm);    
+  
+  s_cases=o_elm.GetContents();
+  o_case=s_cases.First();   
+    
+    
+  while(o_case){ 
+  o_case.Activate();
+  printf('%o',o_case);o_case=s_cases.Next();}
