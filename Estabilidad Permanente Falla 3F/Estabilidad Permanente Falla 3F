@@ -1,0 +1,134 @@
+   
+   object evt_elm1,evt_elm2,o_evt,rms_ci,rms_sim;
+   object o_gen,std,o_elm_ctg,o_res_graf,aGrf,aPage,o_page;   
+   set s_evt,s_gen,s_elm_ctg,s_res_graf;  
+   int i,val1,val2,class1,j,size_vgraf,step; 
+   string str_evt1,str_evt2,label_res,filename,s_aPage,nm_graf;
+   
+   ClearOutput();
+   ResetCalculation();  
+   std=GetActiveScenario();
+    
+   v_graf.Clear(); 
+    
+   s_gen=set_gen.All();  
+   s_elm_ctg=set_elm_ctg.All();   
+   !fs_comp.Execute(); ! Desactivando controladores PSS, AVR 
+   Create_VarsRes.Execute(); !Ejecutando creacion de vars resultado
+   
+   !evt=GetCaseObject('IntEvt');!obteniendo el objeto de casos    
+  
+
+
+   printf('%o',evt); 
+   
+   !o_gen=s_gen.First();
+   o_elm_ctg=s_elm_ctg.First();
+   !***************************************************************
+   j=0; i=0;
+   while(o_elm_ctg){   
+     EchoOff();
+     !Limpiando la totalidad de eventos
+     ResetCalculation(); 
+     s_evt=evt.GetContents('*.*');
+     o_evt=s_evt.First();
+     while(o_evt){Delete(o_evt); o_evt=s_evt.Next();}; 
+     !***************************************************
+     
+     printf('--> Ctg:%o',o_elm_ctg);
+     printf('\ce--> Tiempo de despeje de falla: %1.3f seg',tf);
+     !Creando vector de un unico objeto para usarlo en el scrip graf
+     v_elm_ctg.Clear(); 
+     v_elm_ctg.Insert(j,o_elm_ctg); 
+      
+     str_evt1=sprintf('evt_%s_1',o_elm_ctg:loc_name);
+     str_evt2=sprintf('evt_%s_2',o_elm_ctg:loc_name);
+     
+     class1=o_elm_ctg.IsClass('ElmLne');
+     if(class1){
+     evt_elm1=evt.CreateObject('EvtShc',str_evt1); 
+     evt_elm1:p_target=o_elm_ctg; !elige el objeto ElmSym objetivo
+     evt_elm1:time=to; !<--------
+     evt_elm1:shcloc=loc_fault/100;!Asigna el porcentaje de ubicacion de la LT
+                
+     evt_elm2=evt.CreateObject('EvtSwitch',str_evt2); 
+     evt_elm2:p_target=o_elm_ctg; 
+     evt_elm2:i_switch=0;!0: open line ;1:close line   
+     evt_elm2:time=tf;  
+                }              
+   !Corriendo Rms
+!    rms_ci=GetCaseObject('*.ComInc'); 
+!    rms_sim=GetCaseObject('*.ComSim');
+     run_sim:tstop=tsim;!Tiempo de termino de simulación.
+   
+   EchoOff(); 
+   con_ini:e:p_event=evt;
+   con_ini:e:p_resvar=o_res; 
+   run_sim:c_butinc=con_ini;
+   std.Save(); 
+   
+   val1=con_ini.Execute(); !Ejecutando condiciones iniciales
+               
+                   
+   if(.not. val1){
+   printf('%o-->Condiciones Iniciales Calculadas',con_ini);
+                 }
+   o_res.Clear();              
+   val2=run_sim.Execute();!Ejecutando simulacion rms 
+   if(.not. val2){o_res.Write();
+   printf('%o-->Simulación en el tiempo calculada',run_sim);  
+                }
+  
+   !Analizando la pérdida de paso
+    s_gen=set_gen.All();o_gen=s_gen.First();
+    while(o_gen){
+          step=o_gen:s:outofstep; !variable de perdida de paso
+       
+        if(.not.step){
+              tf=tf+dt;
+             
+               if(tf>40){step=-1;
+          printf('\ccMáximo tiempo de simulación: %1.3f seg',tf);
+          Create_Graf.Execute(); 
+          o_page=Create_Graf:o_page;
+          v_graf.Insert(i,o_page); i+=1;
+          o_elm_ctg=s_elm_ctg.Next(); 
+          break;
+                       } 
+              if(tsim<tf){tsim=tf;}
+              break;
+                     }
+        else if(step){
+          !Escribiendo resultados en caso de pérdida de sincronismo
+          printf('\ccPérdida de sincronismo en: %1.3f seg',tf);
+          Create_Graf.Execute(); 
+          o_page=Create_Graf:o_page;
+          v_graf.Insert(i,o_page); i+=1;
+          o_elm_ctg=s_elm_ctg.Next(); 
+          break;
+                     }                 
+                     
+       o_gen=s_gen.Next();
+                }   
+                           
+                   } 
+  !***************************************************************  
+  
+  
+  !Exportando gráfica
+  aGrf=GetGraphBoard();   
+  size_vgraf=v_graf.Size();
+  for(j=0;j<size_vgraf;j+=1){
+  
+  aPage=v_graf.Get(j);  
+  aPage.DoAutoScaleY();!Ajustar pagina en escala Y
+  aPage.DoAutoScaleX();!Ajustar pagina en escala X    
+  aGrf.Show(aPage);!aGrf: es el pizarron y mostramos la pagina correspondiente
+  filename=sprintf('%s%s',dr,aPage:loc_name);
+  aGrf.WriteWMF(filename); 
+                             }
+  
+  
+
+   EchoOn();
+   
